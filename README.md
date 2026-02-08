@@ -1,4 +1,14 @@
 # Genome Annotation and RNA-seq Analysis Project  
+---
+
+## How to Run the Code
+
+### 1. Gene Count & Common/Specific Genes Analysis
+Run the following command after placing GTF files in the `data/` directory:
+
+```bash
+python scripts/gene_count.py
+
 ### Week-by-Week Bioinformatics Workflow (8 Weeks)
 
 ## Project Overview
