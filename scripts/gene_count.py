@@ -1,43 +1,62 @@
 import pandas as pd
-from collections import Counter
+from collections import defaultdict
 
-def load_gtf(gtf_file):
-    genes = []
+def extract_genes(gtf_file):
+    genes = set()
     with open(gtf_file) as f:
         for line in f:
             if line.startswith("#"):
                 continue
-            cols = line.strip().split("\t")
-            if cols[2] == "gene":
-                info = cols[8]
-                gene_id = info.split("gene_id")[1].split(";")[0].replace('"', '').strip()
-                genes.append(gene_id)
-    return set(genes)
+            fields = line.strip().split("\t")
+            if fields[2] == "gene":
+                attributes = fields[8]
+                for attr in attributes.split(";"):
+                    if "gene_id" in attr:
+                        gene_id = attr.split('"')[1]
+                        genes.add(gene_id)
+    return genes
 
-# Example GTF files (replace with your paths)
+
+# ---- INPUT FILES ----
 gtf_files = {
-    "Goat_1": "data/goat1.gtf",
-    "Goat_2": "data/goat2.gtf",
-    "Goat_3": "data/goat3.gtf"
+    "Chicken": "data/chicken.gtf",
+    "Sheep": "data/sheep.gtf",
+    "Goat": "data/goat.gtf",
+    "Pig": "data/pig.gtf"
 }
 
-gene_sets = {k: load_gtf(v) for k, v in gtf_files.items()}
+gene_sets = {}
+gene_counts = {}
 
-# Total gene count
-gene_counts = {k: len(v) for k, v in gene_sets.items()}
+for species, gtf in gtf_files.items():
+    genes = extract_genes(gtf)
+    gene_sets[species] = genes
+    gene_counts[species] = len(genes)
 
-# Common genes
+# ---- TOTAL GENE COUNT ----
+gene_count_df = pd.DataFrame.from_dict(
+    gene_counts, orient="index", columns=["Total_Genes"]
+)
+gene_count_df.to_excel("results/gene_counts.xlsx")
+
+# ---- COMMON GENES ----
 common_genes = set.intersection(*gene_sets.values())
+pd.DataFrame({"Common_Genes": list(common_genes)}).to_excel(
+    "results/common_genes.xlsx", index=False
+)
 
-# Species-specific genes
-specific_genes = {
-    k: v - common_genes for k, v in gene_sets.items()
-}
+# ---- SPECIES-SPECIFIC GENES ----
+specific_genes = {}
 
-# Save results
-df_counts = pd.DataFrame.from_dict(gene_counts, orient="index", columns=["Total_Genes"])
-df_counts.to_excel("results/gene_counts.xlsx")
+for species in gene_sets:
+    others = set.union(*(gene_sets[s] for s in gene_sets if s != species))
+    specific = gene_sets[species] - others
+    specific_genes[species] = list(specific)
 
-pd.DataFrame({"Common_Genes": list(common_genes)}).to_excel("results/common_genes.xlsx", index=False)
+with pd.ExcelWriter("results/species_specific_genes.xlsx") as writer:
+    for species, genes in specific_genes.items():
+        pd.DataFrame({f"{species}_Specific_Genes": genes}).to_excel(
+            writer, sheet_name=species, index=False
+        )
 
-print("Analysis completed successfully")
+print("✅ Gene analysis completed successfully")
