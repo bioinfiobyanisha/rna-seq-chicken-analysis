@@ -1,5 +1,5 @@
 # Genome Annotation and RNA-seq Analysis Project  
-### Week-by-Week Bioinformatics Workflow (5 Weeks)
+### Week-by-Week Bioinformatics Workflow (8 Weeks)
 
 ## Project Overview
 This repository documents a week-by-week bioinformatics workflow focused on
