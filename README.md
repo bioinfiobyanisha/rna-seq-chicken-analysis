@@ -1,151 +1,180 @@
-# Genome Annotation and RNA-seq Analysis Project  
----
-
-### Week-by-Week Bioinformatics Workflow (8 Weeks)
+# Multi-Species Genome Annotation and Comparative Genomics
 
 ## Project Overview
-This repository documents a week-by-week bioinformatics workflow focused on
-RNA-seq data processing and large-scale genome annotation across multiple species.
-The project involves quality control of sequencing data, genome preparation,
-chromosome-level scaffolding, and reference-based gene annotation using established
-bioinformatics tools.
+This repository contains a bioinformatics workflow for genome assembly refinement, gene annotation transfer, and comparative genomic analysis across multiple livestock species. The project focuses on identifying conserved and species-specific genes and assembling Y chromosome segments in buffalo breeds.
 
-This work was carried out as part of a research internship/training at  
-**National Institute of Animal Biotechnology (NIAB), Hyderabad**,  
-under the guidance of **Dr. Shailesh Sharma (Scientist F)**.
+The workflow integrates reference-guided scaffolding, gene annotation transfer, RNA-seq analysis, and comparative genomics visualization.
 
 ---
 
-## Dataset Summary
-- Chicken genomes analyzed: 45–50
-- Sheep genomes analyzed: multiple breeds
-- Genome assembly levels:
-  - Chromosome-level assemblies
-  - Non-chromosome-level assemblies (scaffolded where required)
+# Objectives
+
+- Perform genome annotation transfer across species
+- Identify common and species-specific genes
+- Assemble Y chromosome segments in buffalo breeds
+- Conduct comparative genomics analysis across livestock genomes
 
 ---
 
-## Tools & Software Used
-- FastQC – RNA-seq quality assessment  
-- fastp – Read preprocessing and quality filtering  
-- RagTag – Chromosome-level scaffolding  
-- Liftoff – Reference-based gene annotation transfer  
-- Linux command line  
-- Excel – Metadata and annotation availability tracking  
+# Species Included
+
+- Buffalo (Bangladesh, Jafarabadi, Murrah)
+- Pig
+- Goat
+- Sheep
 
 ---
 
-## Week-wise Work Summary
+# Workflow Overview
 
-### Week 1 – RNA-seq Data Preparation (21 December)
-- Downloaded and extracted RNA-seq sample data
-- Performed quality assessment using FastQC
-- Reviewed FastQC reports to evaluate read quality
-- Installed fastp for read preprocessing
-- Downloaded chicken reference genome
-- Compiled an Excel sheet of livestock genomes and GTF annotation availability
-- Explored tools and resources for GTF file generation
+## Genome Annotation Pipeline
+![Genome Annotation Pipeline](https://github.com/user-attachments/assets/54750f2d-7eb6-451e-a75b-cb9c54fced90)
 
----
 
-### Week 2 – Annotation Planning & Preprocessing (28 December)
-- Continued RNA-seq data handling and quality analysis
-- Explored fastp for read preprocessing
-- Organized reference genome files
-- Investigated annotation availability across livestock genomes
-- Studied tools and workflows for generating missing GTF files
-- Planned read mapping and annotation steps
+
+## 1 Genome Preparation
+Download reference genomes and annotation files from public databases.
+
+Input files:
+- Genome FASTA
+- Annotation GFF3 / GTF
 
 ---
 
-### Week 3 – Chromosome Scaffolding & Liftoff Testing (4 January)
-- Analyzed assembly status of 45 chicken genomes
-- Identified non-chromosome-level assembled breeds
-- Performed chromosome-level scaffolding using RagTag
-  - Fayoumi genome scaffolded using Red Jungle Fowl and White Leghorn references
-  - Consistent result of 34 chromosomes obtained
-- Ran Liftoff successfully on chromosome 1 (Red Jungle Fowl → White Leghorn)
-- Identified system resource limitations and planned chromosome-wise execution
+## 2 Reference Guided Scaffolding
+
+Tool used:
+RagTag
+
+Purpose:
+Improve genome structure using a closely related reference genome.
+
+Example: ragtag.py scaffold reference.fa target.fa
+
+Output:
+Chromosome-level scaffolds
 
 ---
 
-### Week 4 – Large-scale Chicken Genome Annotation (11 January)
-- Identified 19 chromosome-level assembled chicken breeds
-- Completed Liftoff annotation for all 19 breeds
-- Generated GTF files for 6 chicken breeds lacking annotations
-  using an alternative reference genome (pig)
-- Validated cross-reference annotation strategy
+## 3 Gene Annotation Transfer
+
+Tool used:
+Liftoff
+
+Purpose:
+Transfer gene annotations from reference genome to target genome.
+
+Example: liftoff target.fa reference.fa -g reference.gtf
+
+Output:
+New GTF annotation file for target genome
 
 ---
 
-### Week 5 – Multi-species Genome Annotation (18 January)
-- Generated unique GTF/GFF3 annotation files for 20 chromosome-level chicken breeds
-- Extended the annotation workflow to sheep genomes
-- Used sheep reference genome and GTF files to annotate 7 sheep breeds
-- Established a reusable cross-species genome annotation pipeline
+## 4 Genome Mapping
+
+Tool used:
+Minimap2
+
+Purpose:
+Map genome assemblies to reference chromosomes and identify chromosome-specific scaffolds.
+
+Example: minimap2 -ax asm5 reference.fa genome.fa > alignment.sam
+
+Output:
+SAM alignment file
 
 ---
 
-### Week 6 – Genome Annotation Expansion (25 January)
+## 5 Y Chromosome Identification
 
-- Generated GTF/GFF3 annotation files for all sheep breeds with available chromosome-level genome assemblies  
-- Completed reference-based annotation transfer for sheep genomes  
-- Generated GTF/GFF3 files for 10 goat breeds using goat reference FASTA and GTF files  
-- Prepared annotated datasets for downstream comparative analysis  
+Steps:
+- Extract reference Y chromosome
+- Identify scaffolds mapping to Y chromosome
+- Perform reference-guided assembly
 
----
+Results:
 
-### Week 7 – Gene-Level Comparative Analysis (1 February)
+Bangladesh buffalo
+- 528 Y-linked scaffolds
+- ~8.85 Mb assembled Y segment
 
-- Generated GTF files for 22 goat species  
-- Developed a custom Python script for gene-level analysis  
-- Performed:
-  - Total gene count calculation per species  
-  - Identification of common genes across species  
-  - Identification of breed/species-specific genes  
-  - Extraction and recording of gene names  
-- Compiled all outputs into structured Excel files  
-- Generated an UpSet plot to visualize total, common, and breed-specific gene distributions  
+Jafarabadi buffalo
+- 1163 Y-linked scaffolds
+- ~11.8 Mb assembled Y segment
 
 ---
 
-### Week 8 – Multi-Species Analysis & Visualization Refinement (7 February)
+## 6 Comparative Gene Analysis
 
-- Generated GTF files for different goat breeds  
-- Performed gene count analysis for pig, identifying common and species-specific genes  
-- Organized all results into Excel datasets  
-- Generated an UpSet plot for gene overlap visualization  
-- Identified limitations in the current visualization and initiated refinement  
-- Extended the workflow to sheep and goat comparative analysis  
-- Initiated GTF file generation for cow and buffalo datasets
----
+Tasks performed:
 
-## Key Outcomes
-- Established a complete RNA-seq preprocessing and genome annotation workflow
-- Generated GTF/GFF3 files for multiple chicken and sheep breeds
-- Successfully applied chromosome-level scaffolding and annotation transfer
-- Maintained detailed week-by-week documentation for reproducibility
+- Extract total gene counts
+- Identify common genes across species
+- Identify species-specific genes
+
+Output files:
+- Gene count tables
+- Comparative gene lists
 
 ---
 
-## Current Status
+## 7 Data Visualization
 
-✔ Genome annotation and GTF/GFF3 generation completed for multiple livestock species (chicken, sheep, goat, pig)  
-✔ Chromosome-level genome assemblies successfully utilized where available  
-✔ Gene-level analysis performed to identify total, common, and species-specific genes  
-✔ Results systematically compiled into Excel datasets for interpretation  
-✔ UpSet plots generated to visualize gene overlaps across species  
-✔ A reusable multi-species genome annotation and analysis workflow established
+Tool used:
+UpSet Plot
+
+Purpose:
+Visualize gene overlap across species and breeds.
+
+Output:
+- Gene intersection visualization
+- Breed-specific gene identification
+
+---
+# Repository Structure
+multi-species-genome-annotation
+│
+├── scripts
+│   ├── gene_count.py
+│   └── upset_plot.py
+│
+├── week-01_dec-21.md
+├── week-02_dec-28.md
+├── week-03_jan-04.md
+├── week-04_jan-11.md
+├── week-05_jan-18.md
+├── week-06_jan-25.md
+├── week-07_feb-01.md
+├── week-08_feb-07.md
+├── week-09_feb-15.md
+├── week-10_feb-22.md
+├── week-11_mar-01.md
+│
+└── README.md
 
 ---
 
-## Future Work
+# Tools Used
 
-• Extend genome annotation and comparative analysis to additional livestock species (cow, buffalo)  
-• Refine and optimize UpSet and other visualization methods for clearer interpretation  
-• Integrate downstream RNA-seq analysis with comparative genomics results  
-• Perform functional annotation and biological interpretation of common and species-specific genes  
-• Prepare the workflow and results for publication-quality analysis
+- RagTag
+- Liftoff
+- Minimap2
+- Python
+- Linux command line
+- Excel
+- UpSetPlot
+
+---
+
+# Future Work
+
+- Complete annotation for additional buffalo breeds
+- Improve Y chromosome assembly quality
+- Perform functional annotation
+- Expand comparative genomics analysis
+
+---
 
 ---
 
