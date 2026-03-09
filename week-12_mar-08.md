@@ -1,4 +1,4 @@
-# Week 10 Progress Report (8 March)
+# Week 12 Progress Report (8 March)
 
 ## Y Chromosome Gene Identification and Comparative Analysis
 
